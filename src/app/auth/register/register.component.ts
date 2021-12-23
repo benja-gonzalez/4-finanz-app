@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 import { AuthService } from '../auth.service';
-
 
 @Component({
 	selector: 'app-register',
@@ -15,7 +16,8 @@ export class RegisterComponent implements OnInit {
 
 	constructor(
 		private _fb: FormBuilder,
-		private _as: AuthService
+		private _as: AuthService,
+		private _router: Router
 	) { 
 		this.registerForm = this._initFormRegister();
 	}
@@ -33,12 +35,24 @@ export class RegisterComponent implements OnInit {
 	{
 		// valido si es invalido el formulario.
 		if (this.registerForm.invalid) { return; }
+
+		// dispara el pop up loading
+		this._loadingSwal();
+		// obtengo las credenciales
 		const { value } = this.registerForm;
 
-		this._as.crearUsuario(value)/* .then(
-			(res:any) => console.log({res})
-		).catch((err:any) => console.error({ err })); */
-		console.log({ form: value });
+		// llamado al servicio de auth con credencialesd el form
+		this._as.crearUsuario(value).then(
+			(credentials:any) => {
+				
+				// cierra la instancia del Swal
+				Swal.close();
+				this._router.navigate(['']);
+			}
+		).catch((err:any) => {
+			console.error({ err });
+			Swal.fire({ icon: 'error', text: err.message});
+		});
 	}
 
 	/**
@@ -52,5 +66,10 @@ export class RegisterComponent implements OnInit {
 			password: ['', [Validators.required, Validators.minLength(8)]],
 		}
 	);
+	/**
+	 * Dispara el pop up loading
+	 * @returns Promise<any>
+	 */
+	private _loadingSwal = (): Promise<any> => Swal.fire({ text: 'Cargando...', didOpen: () => { Swal.showLoading() } });
 
 }

@@ -5,10 +5,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 // firebase
-import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
+/* import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { provideAnalytics,getAnalytics,ScreenTrackingService,UserTrackingService } from '@angular/fire/analytics';
 import { provideAuth,getAuth } from '@angular/fire/auth';
-import { provideFirestore,getFirestore } from '@angular/fire/firestore';
+import { provideFirestore,getFirestore } from '@angular/fire/firestore'; */
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireAnalyticsModule } from '@angular/fire/compat/analytics';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+
 
 // components
 import { LoginComponent } from './login/login.component';
@@ -27,20 +31,15 @@ const routes: Routes = [];
 		RouterModule,
 		ReactiveFormsModule,
 		HttpClientModule,
-		// Importaciones necesarias hechas por firebase
-		provideFirebaseApp(() => initializeApp(environment.firebase)),
-		provideAnalytics(() => getAnalytics()),
-		provideAuth(() => getAuth()),
-		provideFirestore(() => getFirestore())
+		AngularFireModule.initializeApp(environment.firebase),
+		AngularFireAnalyticsModule,
+    	AngularFirestoreModule
 	],
 	exports: [
 		LoginComponent,
 		RegisterComponent
 	],
 	providers:
-		[
-			ScreenTrackingService,
-			UserTrackingService
-		]
+		[]
 })
 export class AuthModule { }
