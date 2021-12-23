@@ -48,12 +48,13 @@ export class AuthService implements OnDestroy{
 		this._authFire.authState.subscribe( (info: any) => {
 			if(info){
 				this.suscription = this._afs.doc(`${info.multiFactor.user.uid}/usuario`).valueChanges().subscribe( (fUsuario: any) => {
-					console.log({fUsuario})
-					const {email, uid, username} = fUsuario;
+					// metodo estatico para devolver una instancia del modelo usuario.
+					const usuario = UserModel.fromFirestore(fUsuario);
 					
-					this._store.dispatch(auth.setUsuario({usuario: new UserModel(uid,email,username)}));
+					this._store.dispatch(auth.setUsuario({usuario}));
 				});
-			}else {
+			} else {
+				this.suscription.unsubscribe();
 				this._store.dispatch(auth.unsetUsuario());
 			}
 			this._user$ = info; 
