@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "finanz-app-3cbe3": {
+      "hosting": {
+        "finanz-app": [
+          "finanz-app-3cbe3"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "finanz-app-3cbe3"
+  }
+}

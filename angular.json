@@ -107,6 +107,16 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "prerender": false,
+            "ssr": false,
+            "browserTarget": "finanz-app:build:production",
+            "firebaseProject": "finanz-app-3cbe3",
+            "firebaseHostingSite": "finanz-app-3cbe3"
+          }
         }
       }
     }
