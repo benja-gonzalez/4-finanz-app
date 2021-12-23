@@ -1,14 +1,19 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 // Angular Firestore
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { addDoc, collection, getFirestore } from 'firebase/firestore';
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription, SubscriptionLike } from 'rxjs';
 import { EventEmitter } from '@angular/core';
 
 import { UserModel } from '../models/usuario.model';
+import { GlobalState } from '../app.reducers';
+import { Store } from '@ngrx/store';
+import * as auth from './auth.actions';
+import { map } from 'rxjs/operators';
+import { SharedService } from '../shared/shared.services';
 
 export type UserPayloadRegister = { username: string, password: string, email: string };
 export type UserPayloadLogin = { email:string, password: string };
@@ -16,23 +21,44 @@ export type UserPayloadLogin = { email:string, password: string };
 @Injectable({
 	providedIn: 'root'
 })
-export class AuthService {
+export class AuthService implements OnDestroy{
 	db = getFirestore();
-	private _user$: EventEmitter<any> = new EventEmitter();
-	_userObs$!: Observable<any>;
+	private _user$: any;
+	suscription: SubscriptionLike = new Subscription();
+
 	constructor(
-		private _http: HttpClient,
 		private _authFire: AngularFireAuth,
-		private _afs: AngularFirestore
+		private _afs: AngularFirestore,
+		private _store:Store<GlobalState>,
+		private _sh: SharedService
+
 	) {
 	
+	}
+	ngOnDestroy(): void {
+		//Called once, before the instance is destroyed.
+		//Add 'implements OnDestroy' to the class.
+		this.suscription.unsubscribe();
 	}
 	/**
 	 * Observable del sign in/out
 	 */
 	initFireListener = (): void => {
-		this._userObs$ = this._user$.asObservable();
-		this._authFire.authState.subscribe( (info: any) => {this._user$.emit(info !== null); console.log({ info }); } );
+		
+		this._authFire.authState.subscribe( (info: any) => {
+			if(info){
+				this.suscription = this._afs.doc(`${info.multiFactor.user.uid}/usuario`).valueChanges().subscribe( (fUsuario: any) => {
+					console.log({fUsuario})
+					const {email, uid, username} = fUsuario;
+					
+					this._store.dispatch(auth.setUsuario({usuario: new UserModel(uid,email,username)}));
+				});
+			}else {
+				this._store.dispatch(auth.unsetUsuario());
+			}
+			this._user$ = info; 
+			this._isLogged();
+		} );
 	}
 
 	crearUsuario = async (payload: UserPayloadRegister): Promise<any> => {
@@ -47,5 +73,5 @@ export class AuthService {
 
 	logout = async (): Promise<any> => this._authFire.signOut();
 
-	isLoged = (): Observable<boolean> => of(this._user$ != null);
+	private _isLogged = () => this._sh.enviar(this._user$ !== null);
 }

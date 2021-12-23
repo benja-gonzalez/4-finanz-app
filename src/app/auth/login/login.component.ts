@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { GlobalState } from '../../app.reducers';
 import Swal from 'sweetalert2';
-import { AuthService, UserPayloadLogin } from '../auth.service';
+import { AuthService } from '../auth.service';
+import * as ui from '../../shared/ui.actions';
+import { Subscription } from 'rxjs';
 
 @Component({
 	selector: 'app-login',
@@ -10,19 +14,36 @@ import { AuthService, UserPayloadLogin } from '../auth.service';
 	styles: [
 	]
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
-	formLogin!: FormGroup;
+	formLogin!    : FormGroup;
+	loading       : boolean = false;
+	uiSuscription!: Subscription;
 
 	constructor(
 		private _fb: FormBuilder,
 		private _router: Router,
-		private _as: AuthService
+		private _as: AuthService, 
+		private _store: Store<GlobalState>
 	) {
 		this.formLogin = this._initFormLogin();
 	}
 
 	ngOnInit(): void {
+		this.uiSuscription = this._store.select('ui').subscribe(
+			state => this.loading = state.isLoading
+		);
+		/* if(this.loading){
+			// inicia el cargando
+			this._loadingSwal();
+		}else {
+			// cierra la instancia del swal
+			Swal.close();
+		} */
+	}
+
+	ngOnDestroy(): void {
+		this.uiSuscription.unsubscribe();
 	}
 
 	login = (): void => {
@@ -30,20 +51,20 @@ export class LoginComponent implements OnInit {
 		if(this.formLogin.invalid) {
 			return;
 		}
-		// inicia el loading
-		this._loadingSwal();
-
+		
+		// accion de cargando
+		this._store.dispatch(ui.isLoading());
 		this._as.loginUsuario(this.formLogin.value)
 		.then(
 			(userLoged:any) => {
-				// cierrra la instancia del Swal.
-				Swal.close();
+				this._store.dispatch(ui.stopLoading());
 				this._router.navigateByUrl('');
 			}
 		)
 		.catch(
 			(err:any) => {
 				console.error({err});
+				this._store.dispatch(ui.stopLoading());
 				// esto tambien corta el loading
 				Swal.fire({ icon: 'error', text: err.message});
 			}

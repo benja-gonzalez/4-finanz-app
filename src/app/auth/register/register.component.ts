@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+import { GlobalState } from '../../app.reducers';
 import Swal from 'sweetalert2';
+import * as ui from '../../shared/ui.actions';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -10,14 +14,17 @@ import { AuthService } from '../auth.service';
 	styles: [
 	]
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
 
-	registerForm!: FormGroup;
+	registerForm! : FormGroup;
+	uiSuscription!: Subscription;
+	loading       : boolean = false;
 
 	constructor(
 		private _fb: FormBuilder,
 		private _as: AuthService,
-		private _router: Router
+		private _router: Router,
+		private _store: Store<GlobalState>
 	) { 
 		this.registerForm = this._initFormRegister();
 	}
@@ -27,6 +34,12 @@ export class RegisterComponent implements OnInit {
 	get password() { return this.registerForm.get('password'); }
 
 	ngOnInit(): void {
+		this.uiSuscription = this._store.select('ui').subscribe(
+			state => this.loading = state.isLoading
+		);
+	}
+	ngOnDestroy(): void {
+		this.uiSuscription.unsubscribe();
 	}
 	/**
 	 * Agrega un nuevo usuario a nuestrta BBDD.
@@ -35,21 +48,23 @@ export class RegisterComponent implements OnInit {
 	{
 		// valido si es invalido el formulario.
 		if (this.registerForm.invalid) { return; }
-
-		// dispara el pop up loading
-		this._loadingSwal();
+		this._store.dispatch(ui.isLoading());
+		/* // dispara el pop up loading
+		this._loadingSwal(); */
 		// obtengo las credenciales
 		const { value } = this.registerForm;
 
 		// llamado al servicio de auth con credencialesd el form
 		this._as.crearUsuario(value).then(
 			(credentials:any) => {
-				
-				// cierra la instancia del Swal
-				Swal.close();
+
+				this._store.dispatch(ui.stopLoading());
+				/* // cierra la instancia del Swal
+				Swal.close(); */
 				this._router.navigate(['']);
 			}
 		).catch((err:any) => {
+			this._store.dispatch(ui.stopLoading());
 			console.error({ err });
 			Swal.fire({ icon: 'error', text: err.message});
 		});
