@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../auth.service';
+
 
 @Component({
 	selector: 'app-register',
@@ -12,7 +14,8 @@ export class RegisterComponent implements OnInit {
 	registerForm!: FormGroup;
 
 	constructor(
-		private _fb: FormBuilder
+		private _fb: FormBuilder,
+		private _as: AuthService
 	) { 
 		this.registerForm = this._initFormRegister();
 	}
@@ -29,11 +32,12 @@ export class RegisterComponent implements OnInit {
 	agregarUsuario = (): void =>
 	{
 		// valido si es invalido el formulario.
-		if (this.registerForm.invalid) {
-			return;
-		}
+		if (this.registerForm.invalid) { return; }
 		const { value } = this.registerForm;
 
+		this._as.crearUsuario(value)/* .then(
+			(res:any) => console.log({res})
+		).catch((err:any) => console.error({ err })); */
 		console.log({ form: value });
 	}
 

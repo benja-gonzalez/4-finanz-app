@@ -1,15 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-// firebase
-import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
-import { provideAnalytics,getAnalytics,ScreenTrackingService,UserTrackingService } from '@angular/fire/analytics';
-import { provideAuth,getAuth } from '@angular/fire/auth';
-import { provideFirestore,getFirestore } from '@angular/fire/firestore';
-
-// environments
-import { environment } from '../environments/environment';
-
 // modules
 import { AppRoutingModule } from './app-routing.module';
 import { AuthModule } from './auth/auth.module';
@@ -36,15 +27,8 @@ import { SidebarComponent } from './shared/sidebar/sidebar.component';
 		BrowserModule,
 		AppRoutingModule,
 		AuthModule,
-		// Importaciones necesarias hechas por firebase
-		provideFirebaseApp(() => initializeApp(environment.firebase)),
-		provideAnalytics(() => getAnalytics()),
-		provideAuth(() => getAuth()),
-		provideFirestore(() => getFirestore())
 	],
-	providers   : [
-    ScreenTrackingService,UserTrackingService
-  ],
+	providers   : [],
 	bootstrap   : [AppComponent]
 })
 export class AppModule { }
