@@ -1,4 +1,4 @@
-export class IngresoEgreso {
+export class IngresoEgresoModel {
 
     constructor(
         public descripcion: string,

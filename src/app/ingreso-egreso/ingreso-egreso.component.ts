@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import Swal from 'sweetalert2';
 import { GlobalState } from '../app.reducers';
-import { IngresoEgreso } from '../models/ingreso-egreso.model';
+import { IngresoEgresoModel } from '../models/ingreso-egreso.model';
 import { IngresoEgresoService } from './ingreso-egreso.service';
+
+import * as ui from '../shared/ui.actions';
+import { Subscription } from 'rxjs';
 
 @Component({
 	selector: 'app-ingreso-egreso',
@@ -12,10 +15,12 @@ import { IngresoEgresoService } from './ingreso-egreso.service';
 	styles: [
 	]
 })
-export class IngresoEgresoComponent implements OnInit {
+export class IngresoEgresoComponent implements OnInit, OnDestroy {
 
 	ingresoegresoForm!: FormGroup;
-	tipo: string = 'ingreso';
+	tipo              : string = 'ingreso';
+	suscription!      : Subscription;
+	loading           : boolean = false;
 
 	constructor(
 		private _store: Store<GlobalState>,
@@ -23,9 +28,15 @@ export class IngresoEgresoComponent implements OnInit {
 		private _ies: IngresoEgresoService 
 	) {
 		this.ingresoegresoForm = this._initForm();
+		this.suscription = this._store.select('ui').subscribe(
+			state => this.loading = state.isLoading
+		);
 	}
 
 	ngOnInit(): void {
+	}
+	ngOnDestroy(): void {
+		this.suscription.unsubscribe();
 	}
 	/**
 	 * Agrega un nuevo ingreso o egreso.
@@ -34,11 +45,14 @@ export class IngresoEgresoComponent implements OnInit {
 	agregarIngreso = (): void => {
 		if (this.ingresoegresoForm.invalid) { return; }
 
+		this._store.dispatch(ui.isLoading());
+
 		const { descripcion, monto } = this.ingresoegresoForm.value;
-		const ingresoEgreso = new IngresoEgreso(descripcion, monto, this.tipo);
+		const ingresoEgreso = new IngresoEgresoModel(descripcion, monto, this.tipo);
 
 		this._ies.agregarIngresoEgreso(ingresoEgreso).then(
 			(ref: any) => {
+				this._store.dispatch(ui.stopLoading());
 				this.ingresoegresoForm.reset();
 				Swal.fire({
 					icon : 'success',
@@ -48,6 +62,7 @@ export class IngresoEgresoComponent implements OnInit {
 				});
 			}).catch(
 				(err) => {
+					this._store.dispatch(ui.stopLoading());
 					Swal.fire({ icon: 'error', text: err.message });
 					console.warn({ err });
 				}

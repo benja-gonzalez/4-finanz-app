@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { Firestore } from 'firebase/firestore';
 import { GlobalState } from '../app.reducers';
 import { AuthService } from '../auth/auth.service';
-import { IngresoEgreso } from '../models/ingreso-egreso.model';
+import { IngresoEgresoModel } from '../models/ingreso-egreso.model';
 import { UserModel } from '../models/usuario.model';
 
 @Injectable({
@@ -18,7 +18,7 @@ export class IngresoEgresoService {
 		private _as: AuthService
 	) { }
 
-	agregarIngresoEgreso = (value: IngresoEgreso): Promise<any> => {
+	agregarIngresoEgreso = (value: IngresoEgresoModel): Promise<any> => {
 		const { uid } = this._as.user;
 		const { descripcion,monto,tipo } = value;
 		const doc = this._fs.doc(`${uid}/ingreso-egreso`);

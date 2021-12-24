@@ -30,15 +30,20 @@
                     </div>
 
                     <hr>
-                    <button type="submit" [disabled]="ingresoegresoForm.invalid" class="btn btn-success mr-2">
-                        <i class="fa fa-save"></i>
-                        Agregar
+                    <button type="submit" [disabled]="ingresoegresoForm.invalid || loading" class="btn btn-success mr-2">
+                        <span *ngIf="!loading">
+                            <i class="fa fa-save"></i>
+                            Agregar
+                        </span>
+                        <span *ngIf="loading">
+                            <i class="fa fa-spin fa-sync"></i>
+                            Cargando...
+                        </span>
                     </button>
 
                     <!-- 
                 <button disabled class="btn btn-success mr-2">
-                  <i class="fa fa-spin fa-sync"></i>
-                  Espere por favor...
+                 
                 </button> 
               -->
 
