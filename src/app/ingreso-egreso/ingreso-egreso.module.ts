@@ -11,7 +11,7 @@ import { DetalleComponent } from './detalle/detalle.component';
     DetalleComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
   ]
 })
 export class IngresoEgresoModule { }

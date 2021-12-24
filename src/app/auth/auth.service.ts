@@ -5,14 +5,12 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { addDoc, collection, getFirestore } from 'firebase/firestore';
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Observable, of, Subscription, SubscriptionLike } from 'rxjs';
-import { EventEmitter } from '@angular/core';
+import { Subscription, SubscriptionLike } from 'rxjs';
 
 import { UserModel } from '../models/usuario.model';
 import { GlobalState } from '../app.reducers';
 import { Store } from '@ngrx/store';
 import * as auth from './auth.actions';
-import { map } from 'rxjs/operators';
 import { SharedService } from '../shared/shared.services';
 
 export type UserPayloadRegister = { username: string, password: string, email: string };
@@ -23,7 +21,7 @@ export type UserPayloadLogin = { email:string, password: string };
 })
 export class AuthService implements OnDestroy{
 	db = getFirestore();
-	private _user$: any;
+	private _user$!: UserModel | null;
 	suscription: SubscriptionLike = new Subscription();
 
 	constructor(
@@ -35,10 +33,12 @@ export class AuthService implements OnDestroy{
 	) {
 	
 	}
+	get user() { return { ...this._user$ }; }
 	ngOnDestroy(): void {
 		//Called once, before the instance is destroyed.
 		//Add 'implements OnDestroy' to the class.
 		this.suscription.unsubscribe();
+		this._user$ = null;
 	}
 	/**
 	 * Observable del sign in/out
@@ -50,14 +50,14 @@ export class AuthService implements OnDestroy{
 				this.suscription = this._afs.doc(`${info.multiFactor.user.uid}/usuario`).valueChanges().subscribe( (fUsuario: any) => {
 					// metodo estatico para devolver una instancia del modelo usuario.
 					const usuario = UserModel.fromFirestore(fUsuario);
-					
+					this._user$ = usuario;
 					this._store.dispatch(auth.setUsuario({usuario}));
 				});
 			} else {
+				this._user$ = null;
 				this.suscription.unsubscribe();
 				this._store.dispatch(auth.unsetUsuario());
 			}
-			this._user$ = info; 
 			this._isLogged();
 		} );
 	}

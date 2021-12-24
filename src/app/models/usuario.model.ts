@@ -1,4 +1,3 @@
-
 export class UserModel {
 
     static fromFirestore(firebaseUser: any) { 
