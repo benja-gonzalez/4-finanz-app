@@ -65,7 +65,7 @@ export class AuthService implements OnDestroy{
 	crearUsuario = async (payload: UserPayloadRegister): Promise<any> => {
 		return this._authFire.createUserWithEmailAndPassword(payload.email, payload.password)
 			.then( async ({user}) => {
-				const newUser = new UserModel( user?.uid, payload.email, payload.username);
+				const newUser = new UserModel(user?.uid, payload.email, payload.username);
 				return this._afs.doc(`${newUser.uid}/usuario`).set({...newUser});
 			});
 	}

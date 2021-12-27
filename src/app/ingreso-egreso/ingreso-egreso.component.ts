@@ -7,6 +7,7 @@ import { IngresoEgresoModel } from '../models/ingreso-egreso.model';
 import { IngresoEgresoService } from './ingreso-egreso.service';
 
 import * as ui from '../shared/ui.actions';
+import * as ie from './ingreso-egreso.actions';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -53,6 +54,7 @@ export class IngresoEgresoComponent implements OnInit, OnDestroy {
 		this._ies.agregarIngresoEgreso(ingresoEgreso).then(
 			(ref: any) => {
 				this._store.dispatch(ui.stopLoading());
+				// this._store.dispatch()
 				this.ingresoegresoForm.reset();
 				Swal.fire({
 					icon : 'success',

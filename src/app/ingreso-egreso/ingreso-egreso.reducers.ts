@@ -11,7 +11,7 @@ export const initialState: IngresoEgresoState = {
 
 const _ingresoEgresoReducer = createReducer(initialState,
 
-    on(setItems, (state,{items})=> ({ ...state, ...items})),
+    on(setItems, (state,{items})=> ({ ...state, ...items })),
     on(unsetItems, (state)=> ({ ...state, items: [] })),
 
 );
