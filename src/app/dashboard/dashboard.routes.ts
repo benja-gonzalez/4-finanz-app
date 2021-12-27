@@ -4,14 +4,14 @@ import { EstadisticaComponent } from "../ingreso-egreso/estadistica/estadistica.
 import { IngresoEgresoComponent } from "../ingreso-egreso/ingreso-egreso.component";
 
 export const DashboarRoutes: Routes =
-    [
-        { 
-            path: '', component: EstadisticaComponent
-        },
-        {
-            path: 'ingreso-egreso', component: IngresoEgresoComponent
-        },
-        {
-            path: 'detalle', component: DetalleComponent
-        }
-    ];
+[
+    { 
+        path: '', component: EstadisticaComponent
+    },
+    {
+        path: 'ingreso-egreso', component: IngresoEgresoComponent
+    },
+    {
+        path: 'detalle', component: DetalleComponent
+    }
+];

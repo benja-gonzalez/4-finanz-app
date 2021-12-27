@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate, CanLoad, Router } from '@angular/router';
+import { of } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
-import { tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { SharedService } from 'src/app/shared/shared.services';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-;
+
 	constructor( private _sh: SharedService, private _router: Router){}
 
 	canActivate(): Observable<boolean> {

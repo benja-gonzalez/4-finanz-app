@@ -8,7 +8,9 @@ import { DashboarRoutes } from './dashboard/dashboard.routes';
 
 const routes: Routes =
 [
-	{ path: '', component: DashboardComponent, children: DashboarRoutes, canActivate: [AuthGuard] },
+	/* Lazyload */
+	{ path: '', component: DashboardComponent, /* canLoad: [AuthGuard], */ 
+		loadChildren:() => import('./ingreso-egreso/ingreso-egreso.module').then( m => m.IngresoEgresoModule ) },
 	{ path: 'login', component: LoginComponent },
 	{ path: 'register', component: RegisterComponent },
 	{ path: '**',  redirectTo: '' }

@@ -8,18 +8,31 @@ import { OrdenarIePipe } from '../pipes/ordenar-ie.pipe';
 // componentes
 import { EstadisticaComponent } from './estadistica/estadistica.component';
 import { DetalleComponent } from './detalle/detalle.component';
-
-
+import { IngresoEgresoComponent } from './ingreso-egreso.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DashboardComponent } from '../dashboard/dashboard.component';
+import { SharedModule } from '../shared/shared.module';
+import { RouterModule } from '@angular/router';
+import { DashboardRoutesModule } from '../dashboard/dashboard-routes.module';
 @NgModule({
 	declarations: [
 		EstadisticaComponent,
 		DetalleComponent,
-		OrdenarIePipe
+		OrdenarIePipe, 
+		IngresoEgresoComponent,
+		DashboardComponent
+
 	],
 	imports: [
 		CommonModule,
-		BrowserModule,
-		NgChartsModule 
+		NgChartsModule ,
+		ReactiveFormsModule,
+    	FormsModule,
+		SharedModule,
+		RouterModule,
+		DashboardRoutesModule
 	],
+	exports: [
+	]
 })
 export class IngresoEgresoModule { }
