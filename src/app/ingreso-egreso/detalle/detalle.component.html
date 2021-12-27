@@ -15,11 +15,16 @@
                     </thead>
 
                     <tbody>
-                        <tr>
-                            <td>Descripción</td>
-                            <td>Monto</td>
-                            <td>Tipo</td>
-                            <td>acciones</td>
+                        <tr *ngFor="let item of (ingresosEgresos | ordenarIe)">
+                            <td>{{ item?.descripcion }}</td>
+                            <td>{{ item?.monto | currency }}</td>
+                            <td [class.text-danger]="item?.tipo === 'egreso'" [class.text-success]="item?.tipo === 'ingreso'">{{ item?.tipo }}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" (click)="eliminarItem(item?.uid)">
+                                    <i title="Borrar elemento" tooltip="Borrar elemento" class="fa fa-trash cursor"></i>
+                                    Eliminar
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
 

@@ -20,6 +20,7 @@ import { IngresoEgresoComponent } from './ingreso-egreso/ingreso-egreso.componen
 import { FooterComponent } from './shared/footer/footer.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
+import { IngresoEgresoModule } from './ingreso-egreso/ingreso-egreso.module';
 
 
 
@@ -45,6 +46,7 @@ import { SidebarComponent } from './shared/sidebar/sidebar.component';
 			logOnly: environment.production, // Restrict extension to log-only mode
 			autoPause: true, // Pauses recording actions and state changes when the extension window is not open
 		}),
+		IngresoEgresoModule
 	],
 	providers   : [],
 	bootstrap   : [AppComponent]

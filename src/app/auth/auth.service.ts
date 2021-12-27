@@ -6,7 +6,7 @@ import { addDoc, collection, getFirestore } from 'firebase/firestore';
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Subscription, SubscriptionLike } from 'rxjs';
-
+import * as ie from '../ingreso-egreso/ingreso-egreso.actions';
 import { UserModel } from '../models/usuario.model';
 import { GlobalState } from '../app.reducers';
 import { Store } from '@ngrx/store';
@@ -23,6 +23,7 @@ export class AuthService implements OnDestroy{
 	db = getFirestore();
 	private _user$!: UserModel | null;
 	suscription: SubscriptionLike = new Subscription();
+	suscriptionAfs!: SubscriptionLike;
 
 	constructor(
 		private _authFire: AngularFireAuth,
@@ -38,27 +39,32 @@ export class AuthService implements OnDestroy{
 		//Called once, before the instance is destroyed.
 		//Add 'implements OnDestroy' to the class.
 		this.suscription.unsubscribe();
+		this.suscriptionAfs.unsubscribe();
 		this._user$ = null;
+		this._isLogged();
 	}
 	/**
 	 * Observable del sign in/out
 	 */
 	initFireListener = (): void => {
 		
-		this._authFire.authState.subscribe( (info: any) => {
+		this.suscriptionAfs = this._authFire.authState.subscribe( (info: any) => {
 			if(info){
 				this.suscription = this._afs.doc(`${info.multiFactor.user.uid}/usuario`).valueChanges().subscribe( (fUsuario: any) => {
 					// metodo estatico para devolver una instancia del modelo usuario.
 					const usuario = UserModel.fromFirestore(fUsuario);
 					this._user$ = usuario;
 					this._store.dispatch(auth.setUsuario({usuario}));
+					this._isLogged();
 				});
 			} else {
 				this._user$ = null;
 				this.suscription.unsubscribe();
 				this._store.dispatch(auth.unsetUsuario());
+				this._store.dispatch(ie.unsetItems());
+				this._isLogged();
 			}
-			this._isLogged();
+			
 		} );
 	}
 
@@ -72,7 +78,11 @@ export class AuthService implements OnDestroy{
 
 	loginUsuario = async (payload: UserPayloadLogin): Promise<any> => this._authFire.signInWithEmailAndPassword(payload.email,payload.password);
 
-	logout = async (): Promise<any> => this._authFire.signOut();
+	logout = async (): Promise<any> => {
+		this._authFire.signOut(); 
+		this._store.dispatch(auth.unsetUsuario()); 
+		this._store.dispatch(ie.unsetItems());
+	}
 
 	private _isLogged = () => this._sh.enviar(this._user$ !== null);
 }

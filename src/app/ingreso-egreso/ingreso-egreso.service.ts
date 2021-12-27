@@ -50,13 +50,15 @@ export class IngresoEgresoService implements OnDestroy {
 						
 					)
 				))
-				)
-				
-			
+			);	
 			/* .subscribe(
 				item => {
 				console.log({item})
 			}
 		) */
+	}
+	borrarItem = (payload: string) => {
+		const { uid } = this._as.user;
+		return this._fs.doc(`${uid}/ingreso-egreso/items/${payload}`).delete();
 	}
 }

@@ -1,7 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+import { GlobalState } from 'src/app/app.reducers';
 import { AuthService } from 'src/app/auth/auth.service';
+import { UserModel } from 'src/app/models/usuario.model';
 import Swal from 'sweetalert2';
+import * as auth from '../../auth/auth.actions';
 
 @Component({
 	selector: 'app-sidebar',
@@ -9,14 +14,23 @@ import Swal from 'sweetalert2';
 	styles: [
 	]
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
+
+	subscription!: Subscription;
+	activeUser!  : UserModel;
 
 	constructor(
 		private _router: Router,
-		private _as: AuthService
+		private _as: AuthService,
+		private _store:Store<GlobalState>
 	) { }
 
 	ngOnInit(): void {
+		this.subscription = this._store.select('auth').subscribe( ({usuario}) => this.activeUser = usuario  );
+	}
+
+	ngOnDestroy(): void {
+		this.subscription.unsubscribe();
 	}
 
 	logout = (): void => {

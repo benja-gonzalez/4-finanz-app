@@ -1,8 +1,9 @@
 import { Action, createReducer, on } from '@ngrx/store';
+import { IngresoEgresoModel } from '../models/ingreso-egreso.model';
 import { setItems, unsetItems } from './ingreso-egreso.actions';
 
 export interface IngresoEgresoState {
-    items: []; 
+    items: IngresoEgresoModel[]; 
 }
 
 export const initialState: IngresoEgresoState = {
@@ -11,8 +12,8 @@ export const initialState: IngresoEgresoState = {
 
 const _ingresoEgresoReducer = createReducer(initialState,
 
-    on(setItems, (state,{items})=> ({ ...state, ...items })),
-    on(unsetItems, (state)=> ({ ...state, items: [] })),
+    on(setItems, (state,{items})=> ({ ...state, items: [...items] })),
+    on(unsetItems, (state)=> ({ ...state,items: [] })),
 
 );
 
