@@ -22,8 +22,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 		this.suscription = this._store.select('auth').pipe(filter(auth => auth.usuario !== null))
 			.subscribe(
 				(usuario: any) => {
-					console.log({ usuario });
-					this._ies.initIngresoEgresoListener(usuario.usuario.uid);
+					// console.log({ usuario });
+					this._ies.initIngresoEgresoListener(usuario.usuario.uid)
 				}
 		);
 		

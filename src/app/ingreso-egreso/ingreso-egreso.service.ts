@@ -2,8 +2,8 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { AngularFirestore, DocumentChangeAction } from '@angular/fire/compat/firestore';
 import { Store } from '@ngrx/store';
 import { Firestore } from 'firebase/firestore';
-import { Observable, of, SubscriptionLike } from 'rxjs';
-import { map } from "rxjs/operators"; 
+import { SubscriptionLike } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { GlobalState } from '../app.reducers';
 import { AuthService } from '../auth/auth.service';
 import { IngresoEgresoModel } from '../models/ingreso-egreso.model';
@@ -37,7 +37,7 @@ export class IngresoEgresoService implements OnDestroy {
 	initIngresoEgresoListener = (value: any): any => {
 		const url = `${value}/ingreso-egreso/items`;
 		return this._fs.collection(url).snapshotChanges()
-			.pipe(/* map(
+			.pipe( <any>map(
 				(snapshot: any): any =>
 					(snapshot.map(
 						(doc: { payload: { doc: { id: any; data: () => any; }; }; }): any => 
@@ -49,7 +49,7 @@ export class IngresoEgresoService implements OnDestroy {
 						}
 						
 					)
-				)) */
+				))
 				)
 				
 			
