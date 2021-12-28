@@ -5,13 +5,14 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { addDoc, collection, getFirestore } from 'firebase/firestore';
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Subscription, SubscriptionLike } from 'rxjs';
+import { Observable, Subscription, SubscriptionLike } from 'rxjs';
 import * as ie from '../ingreso-egreso/ingreso-egreso.actions';
 import { UserModel } from '../models/usuario.model';
 import { GlobalState } from '../app.reducers';
 import { Store } from '@ngrx/store';
 import * as auth from './auth.actions';
 import { SharedService } from '../shared/shared.services';
+import { map } from 'rxjs/operators';
 
 export type UserPayloadRegister = { username: string, password: string, email: string };
 export type UserPayloadLogin = { email:string, password: string };
@@ -55,14 +56,12 @@ export class AuthService implements OnDestroy{
 					const usuario = UserModel.fromFirestore(fUsuario);
 					this._user$ = usuario;
 					this._store.dispatch(auth.setUsuario({usuario}));
-					this._isLogged();
 				});
 			} else {
 				this._user$ = null;
 				this.suscription.unsubscribe();
 				this._store.dispatch(auth.unsetUsuario());
 				this._store.dispatch(ie.unsetItems());
-				this._isLogged();
 			}
 			
 		} );
@@ -84,5 +83,7 @@ export class AuthService implements OnDestroy{
 		this._store.dispatch(ie.unsetItems());
 	}
 
-	private _isLogged = () => this._sh.enviar(this._user$ !== null);
+	_isLogged = (): any => this._authFire.authState.pipe(
+		<any>map( (fUser:any): any => fUser !== null )
+	);// this._sh.enviar(this._user$ !== null);
 }

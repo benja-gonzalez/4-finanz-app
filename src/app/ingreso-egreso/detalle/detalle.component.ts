@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
-import { GlobalState } from '../../app.reducers';
 import { IngresoEgresoModel } from '../../models/ingreso-egreso.model';
+import { GlobalStateWithIEM } from '../ingreso-egreso.reducers';
 import { IngresoEgresoService } from '../ingreso-egreso.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class DetalleComponent implements OnInit, OnDestroy {
 	ingresosEgresos!: IngresoEgresoModel[];
 
 	constructor(
-		private _store: Store<GlobalState>,
+		private _store: Store<GlobalStateWithIEM>,
 		private _ies: IngresoEgresoService
 	) {
 		

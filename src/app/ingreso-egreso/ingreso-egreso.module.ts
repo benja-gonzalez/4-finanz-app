@@ -14,6 +14,9 @@ import { DashboardComponent } from '../dashboard/dashboard.component';
 import { SharedModule } from '../shared/shared.module';
 import { RouterModule } from '@angular/router';
 import { DashboardRoutesModule } from '../dashboard/dashboard-routes.module';
+import { StoreModule } from '@ngrx/store';
+import { ingresoEgresoReducer } from './ingreso-egreso.reducers';
+
 @NgModule({
 	declarations: [
 		EstadisticaComponent,
@@ -30,7 +33,8 @@ import { DashboardRoutesModule } from '../dashboard/dashboard-routes.module';
     	FormsModule,
 		SharedModule,
 		RouterModule,
-		DashboardRoutesModule
+		DashboardRoutesModule,
+		StoreModule.forFeature('items',ingresoEgresoReducer)
 	],
 	exports: [
 	]

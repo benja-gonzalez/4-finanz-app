@@ -9,11 +9,11 @@ import * as ie from './ingreso-egreso/ingreso-egreso.reducers';
 export interface GlobalState {
    ui   : ui.UiState,
    auth : auth.AuthState,
-   items: ie.IngresoEgresoState
+   /* items: ie.IngresoEgresoState */
 }
 
 export const appReducers: ActionReducerMap<GlobalState> = {
    ui   : ui.uiReducer,
    auth : auth.authReducer,
-   items: ie.ingresoEgresoReducer
+/*    items: ie.ingresoEgresoReducer */
 }
